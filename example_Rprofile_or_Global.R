@@ -3,4 +3,3 @@ Sys.setenv(BASE_URL = "https://test.datim.org/")
 Sys.setenv(AWS_PROFILE = "*****")
 Sys.setenv(SECRET_ID = "****")
 Sys.setenv(TEST_BUCKET = "****")
-
