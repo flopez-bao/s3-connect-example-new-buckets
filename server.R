@@ -170,7 +170,7 @@ server <- function(input, output, session) {
   # write data test ----
   observeEvent(input$write_s3_test, {
     
-    response <- s3_write(Sys.getenv("TEST_SERVER"))
+    response <- s3_write(Sys.getenv("TEST_BUCKET_WRITE"))
     
     # render message
     output$message <- renderPrint({ response })

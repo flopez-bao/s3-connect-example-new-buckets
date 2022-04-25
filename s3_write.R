@@ -3,15 +3,15 @@ library(readxl)
 library(paws)
 
 
-s3_write <- function(server) {
+s3_write <- function(bucket) {
   
   #my bucket
-  my_bucket <- paste(server,".pepfar.data.data-extracts",sep="")
+  my_bucket <- paste(bucket)
   
   # my data frame
   my_df <- data.frame("year" = c(2019,2020,2021), "indicator" = c(1,2,3))
   
-  print("writing the following to s3...")
+  print(paste0("writing the following to this s3 bucket...",bucket))
   print(my_df)
   
   # write to S3
@@ -19,8 +19,8 @@ s3_write <- function(server) {
   tryCatch({
    
       s3write_using(my_df, FUN = write.csv,
-                  bucket = paste(server,".pepfar.data.my-data-group",sep=""),
-                  object = "byod_covid_mer/file_share/test.csv")
+                  bucket = bucket,
+                  object = "038640439615_system_covid_mer/testing_fl.csv")
   
   },
     error=function(e) {
