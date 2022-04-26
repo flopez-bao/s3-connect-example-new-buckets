@@ -20,7 +20,7 @@ s3_write <- function(bucket) {
    
       s3write_using(my_df, FUN = write.csv,
                   bucket = my_bucket,
-                  object = "se1325_system_covid_mer/testing_fl.csv")
+                  object = "system_covid_mer/testing_fl.csv")
   
   },
     error=function(e) {
