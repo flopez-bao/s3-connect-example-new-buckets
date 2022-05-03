@@ -61,8 +61,8 @@ server <- function(input, output, session) {
           actionButton("write_s3_test", "Write to S3 TEST"),
           br(),
           br(),
-          actionButton("write_s3_prod", "Write to S3 PROD"),
-          br(),
+          #actionButton("write_s3_prod", "Write to S3 PROD"),
+          #br(),
           br(),
           width = 6
         ),
