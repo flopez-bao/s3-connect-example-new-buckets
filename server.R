@@ -152,7 +152,7 @@ server <- function(input, output, session) {
     
     # read data
     tryCatch({
-      my_df <- s3_read(Sys.getenv("TEST_SERVER"))
+      my_df <- s3_read(Sys.getenv("TEST_BUCKET"))
     },
     error = function(e) {
       print(e)

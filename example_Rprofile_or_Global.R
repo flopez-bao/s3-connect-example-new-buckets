@@ -1,5 +1,14 @@
+# the following aws profile configuration can only access testing.
 source("renv/activate.R")
-Sys.setenv(BASE_URL = "https://test.datim.org/")
-Sys.setenv(AWS_PROFILE = "*****")
+
+# user credentials ----
+Sys.setenv(BASE_URL = "****")
 Sys.setenv(SECRET_ID = "****")
-Sys.setenv(TEST_BUCKET = "****")
+Sys.setenv(AWS_REGION = "****")
+Sys.setenv(SECRET_NAME = "****")
+
+
+
+# buckets ----
+Sys.setenv(TEST_BUCKET = "*****")
+Sys.setenv(TEST_BUCKET_WRITE = "***")

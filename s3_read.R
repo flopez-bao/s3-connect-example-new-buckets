@@ -3,10 +3,10 @@ library(readxl)
 library(paws)
 
 
-s3_read <- function(server) {
+s3_read <- function(bucket) {
   
   # params and structuring ----
-  my_bucket <- Sys.getenv("TEST_BUCKET")
+  my_bucket <- bucket
   
   # Lists all of bucket contents, fill in your bucket
   choices <- aws.s3::get_bucket(bucket = my_bucket)
