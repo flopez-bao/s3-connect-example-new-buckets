@@ -3,11 +3,7 @@ source("renv/activate.R")
 
 # user credentials ----
 Sys.setenv(BASE_URL = "****")
-Sys.setenv(SECRET_ID = "****")
-Sys.setenv(AWS_REGION = "****")
 Sys.setenv(SECRET_NAME = "****")
-
-
 
 # buckets ----
 Sys.setenv(TEST_BUCKET = "*****")
