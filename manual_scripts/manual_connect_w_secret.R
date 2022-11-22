@@ -82,14 +82,14 @@ if(Sys.getenv("SECRET_ID") == "system_narratives") {
 
 # test writing --------------
 
-if (Sys.getenv("SECRET_ID") == "system_narratives") {
+# write to narratives workspace
 
   print("writing to narratives...")
   s3write_using(mtcars, FUN = write.csv,
                 bucket = Sys.getenv("TEST_BUCKET_WRITE"),
                 object = "system_narratives/testing_fl.csv")
   
-} else {
+  # write to yoda workspace
   
   print("writing to yoda...")
   s3write_using(mtcars, FUN = write.csv,
@@ -97,12 +97,19 @@ if (Sys.getenv("SECRET_ID") == "system_narratives") {
                object = "system_yoda/testing_fl.csv"
   )
   
-}
+  # write to dreams workspace
+  
+  print("writing to system dreams...")
+  s3write_using(mtcars, FUN = write.csv,
+                bucket = Sys.getenv("TEST_BUCKET_WRITE"),
+                object = "system_dreams_saturation/testing_fl.csv"
+  )
+  
 
 # test reading from write bucket --------
-# ian would be reading his model files
 
-if (Sys.getenv("SECRET_ID") == "system_narratives") {
+
+  # write to narratives workspace
   
   print("reading narratives data...")
   s3read_using(FUN = read.csv,
@@ -110,7 +117,7 @@ if (Sys.getenv("SECRET_ID") == "system_narratives") {
                 object = "system_narratives/testing_fl.csv"
   )
   
-} else {
+  # write to yoda workspace
   
   print("reading yoda data...")
   s3read_using(FUN = read.csv,
@@ -118,5 +125,12 @@ if (Sys.getenv("SECRET_ID") == "system_narratives") {
                 object = "system_yoda/testing_fl.csv"
   )
   
-}
+  # write to dreams workspace
+  
+  print("reading dreams data...")
+  s3read_using(FUN = read.csv,
+               bucket = Sys.getenv("TEST_BUCKET_WRITE"),
+               object = "system_dreams_saturation/testing_fl.csv"
+  )
+  
 
