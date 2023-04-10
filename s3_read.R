@@ -26,19 +26,7 @@ s3_read <- function(bucket) {
   print(choices)
   # reset row names
   rownames(choices) <- NULL
-  
-  if(Sys.getenv("SECRET_ID") == "system_narratives") {
-    print("reading narratives restricted data...")
-    
-    my_data <- "Narratives/Current_Frozen/xlsx/Narratives.xlsx"
-    data <- aws.s3::s3read_using(FUN = readxl::read_xlsx,
-                                 trim_ws = TRUE, 
-                                 bucket = my_bucket,
-                                 object = my_data)
-    
-    head(data, 5)
-    
-  } else {
+ 
     print("reading yoda restricted data...")
     # read options
     #read in data, fill in your bucket name and file name (object should hold the name of the file you want to read)
@@ -50,9 +38,6 @@ s3_read <- function(bucket) {
                                  object = my_data)
     
     head(data, 5)
-    
-  }
-  
   
   
 }

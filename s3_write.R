@@ -3,24 +3,16 @@ library(readxl)
 library(paws)
 
 
-s3_write <- function(bucket) {
-  
-  if (Sys.getenv("SECRET_ID") == "system_narratives") {
-    
-    print("writing to narratives...")
+# depending on your specific prefix you will change
+# your prefix is basically the folder in S3 you are allowed to write to
+# in your workspace``
+s3_write <- function(bucket, your_prefix) {
+    my_prefix = "/system_myapp/"
     s3write_using(mtcars, FUN = write.csv,
                   bucket = bucket,
-                  object = "system_narratives/testing_fl.csv")
-    
-  } else {
-    
-    print("writing to yoda...")
-    s3write_using(mtcars, FUN = write.csv,
-                  bucket = bucket,
-                  object = "system_yoda/testing_fl.csv"
+                  object = paste0(my_prefix, "my_file_name.csv")
     )
-    
-  }
+
 }
 
 
