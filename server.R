@@ -2,11 +2,13 @@
 library(shiny)
 library(futile.logger)
 library(shinyWidgets)
+library(digest)
 
 #source functions ----
 source("s3_connect.R")
 source("s3_read.R")
 source("s3_write.R")
+source("functions.R")
 
 # server ----
 server <- function(input, output, session) {
@@ -119,6 +121,15 @@ server <- function(input, output, session) {
         user_input$d2_session  <-  d2_default_session$clone()
         d2_default_session <- NULL
         
+        # log login event in s3 ----
+        d <- list(
+          app = Sys.getenv("SECRET_ID"),
+          year = substr(Sys.Date(),1,4),
+          uuid = "1",
+          source_user = "unknown"
+        )
+        sendEventToS3(d = d, "LOGIN")
+        
         
         # Need to check the user is a member of the PRIME Data Systems Group, COP Memo group, or a super user
         user_input$memo_authorized  <-
@@ -158,6 +169,15 @@ server <- function(input, output, session) {
       print(e)
     })
     
+
+      d <- list(
+        app = Sys.getenv("SECRET_ID"),
+        year = substr(Sys.Date(),1,4),
+        uuid = "1",
+        source_user = "unknown"
+      )
+      sendEventToS3(d = d, "S3_READ")
+    
     # show data
     output$table <- renderDataTable(my_df,
                                     options = list(
@@ -191,6 +211,14 @@ server <- function(input, output, session) {
   
   # logout process ----
   observeEvent(input$logout_button, {
+    d <- list(
+      app = Sys.getenv("SECRET_ID"),
+      year = substr(Sys.Date(),1,4),
+      uuid = "1",
+      source_user = "unknown"
+    )
+    sendEventToS3(d = d, "LOGOUT")
+    
     flog.info(paste0("User ", user_input$d2_session$me$userCredentials$username, " logged out."))
     user_input$authenticated  <-  FALSE
     user_input$user_name <- ""
