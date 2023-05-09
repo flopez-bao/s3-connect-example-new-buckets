@@ -6,7 +6,7 @@ sendEventToS3 <- function(d=NULL, event_type, user_input=NULL) {
     stop("you have not provided logging information")
   }
   
-  print(d)
+  #print(d)
   
   s3 <- paws::s3()
   tm <- as.POSIXlt(Sys.time(), "UTC")
@@ -19,13 +19,13 @@ sendEventToS3 <- function(d=NULL, event_type, user_input=NULL) {
            "/",
            ts_file, ".csv")
   
-  print(object_name)
+  #print(object_name)
   
   event_info <- list(
     event_type = event_type,
     app = d$app,
     year = d$year,
-    uuid = d$uuid,
+    uuid = user_input$uuid,
     user = digest(d$source_user, "md5", serialize = FALSE),
     ts = strftime(tm, "%Y-%m-%dT%H:%M:%S%z")
   )
@@ -43,7 +43,7 @@ sendEventToS3 <- function(d=NULL, event_type, user_input=NULL) {
     fileEncoding = "UTF-8"
   )
   
-  print("done writing")
+  #print("done writing")
   
   # Load the file as a raw binary
   read_file <- file(tmp, "rb")
@@ -66,3 +66,4 @@ sendEventToS3 <- function(d=NULL, event_type, user_input=NULL) {
   
   return(r)
 }
+

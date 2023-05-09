@@ -13,11 +13,19 @@ source("functions.R")
 # server ----
 server <- function(input, output, session) {
   
+  # app information
+  d <- list(
+    app = Sys.getenv("SECRET_ID"),
+    year = substr(Sys.Date(),1,4),
+    source_user = "unknown"
+  )
+  
   # user information
   user_input  <-  reactiveValues(authenticated = FALSE,
                                  status = "",
                                  d2_session = NULL,
-                                 memo_authorized = FALSE)
+                                 memo_authorized = FALSE,
+                                 uuid = NULL)
   
   # is the user authenticated?
   output$ui <- renderUI({
@@ -94,6 +102,7 @@ server <- function(input, output, session) {
   
   # Login process ----
   observeEvent(input$login_button, {
+    user_input$uuid <- uuid::UUIDgenerate()
     tryCatch({
       datimutils::loginToDATIM(base_url = Sys.getenv("BASE_URL"),
                                username = input$user_name,
@@ -117,18 +126,15 @@ server <- function(input, output, session) {
     
     if (exists("d2_default_session")) {
       if (any(class(d2_default_session) == "d2Session")) {
+        
         user_input$authenticated  <-  TRUE
         user_input$d2_session  <-  d2_default_session$clone()
         d2_default_session <- NULL
         
+        print(user_input$uuid)
+        
         # log login event in s3 ----
-        d <- list(
-          app = Sys.getenv("SECRET_ID"),
-          year = substr(Sys.Date(),1,4),
-          uuid = "1",
-          source_user = "unknown"
-        )
-        sendEventToS3(d = d, "LOGIN")
+        sendEventToS3(d = d, "LOGIN", user_input = user_input)
         
         
         # Need to check the user is a member of the PRIME Data Systems Group, COP Memo group, or a super user
@@ -170,13 +176,7 @@ server <- function(input, output, session) {
     })
     
 
-      d <- list(
-        app = Sys.getenv("SECRET_ID"),
-        year = substr(Sys.Date(),1,4),
-        uuid = "1",
-        source_user = "unknown"
-      )
-      sendEventToS3(d = d, "S3_READ")
+      sendEventToS3(d = d, "S3_READ", user_input = user_input)
     
     # show data
     output$table <- renderDataTable(my_df,
@@ -211,13 +211,8 @@ server <- function(input, output, session) {
   
   # logout process ----
   observeEvent(input$logout_button, {
-    d <- list(
-      app = Sys.getenv("SECRET_ID"),
-      year = substr(Sys.Date(),1,4),
-      uuid = "1",
-      source_user = "unknown"
-    )
-    sendEventToS3(d = d, "LOGOUT")
+
+    sendEventToS3(d = d, "LOGOUT", user_input = user_input)
     
     flog.info(paste0("User ", user_input$d2_session$me$userCredentials$username, " logged out."))
     user_input$authenticated  <-  FALSE
