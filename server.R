@@ -3,6 +3,7 @@ library(shiny)
 library(futile.logger)
 library(shinyWidgets)
 library(digest)
+library(pdaprules)
 
 #source functions ----
 source("s3_connect.R")
@@ -13,12 +14,12 @@ source("functions.R")
 # server ----
 server <- function(input, output, session) {
   
-  # app information
-  d <- list(
-    app = Sys.getenv("SECRET_ID"),
-    year = substr(Sys.Date(),1,4),
-    source_user = "unknown"
-  )
+  # # app information
+  # d <- list(
+  #   app = Sys.getenv("SECRET_ID"),
+  #   year = substr(Sys.Date(),1,4)#,
+  #   #source_user = "something-not-unknown"
+  # )
   
   # user information
   user_input  <-  reactiveValues(authenticated = FALSE,
@@ -119,7 +120,7 @@ server <- function(input, output, session) {
       })
     },
     # This function throws an error if the login is not successful
-    error = function(e) {
+    error = function(e) { 
       flog.info(paste0("User ", input$username, " login failed."), name = "datapack")
     }
     )
@@ -132,9 +133,11 @@ server <- function(input, output, session) {
         d2_default_session <- NULL
         
         print(user_input$uuid)
+        print(user_input$d2_session$username)
         
         # log login event in s3 ----
-        sendEventToS3(d = d, "LOGIN", user_input = user_input)
+        #d$source_user <- user_input$d2_session$username
+        send_event_to_s3(app_name = Sys.getenv("SECRET_ID"), event_type = "LOGIN", user_input = user_input, log_bucket = Sys.getenv("LOG_BUCKET"))
         
         
         # Need to check the user is a member of the PRIME Data Systems Group, COP Memo group, or a super user
@@ -169,14 +172,14 @@ server <- function(input, output, session) {
     
     # read data
     tryCatch({
-      my_df <- s3_read(Sys.getenv("TEST_BUCKET"))
+      my_df <- s3_read(Sys.getenv("S3_READ"))
     },
     error = function(e) {
       print(e)
     })
     
 
-      sendEventToS3(d = d, "S3_READ", user_input = user_input)
+    send_event_to_s3(app_name = Sys.getenv("SECRET_ID"), event_type = "S3_READ", user_input = user_input, log_bucket = Sys.getenv("LOG_BUCKET"))
     
     # show data
     output$table <- renderDataTable(my_df,
@@ -190,7 +193,7 @@ server <- function(input, output, session) {
   # write data test ----
   observeEvent(input$write_s3_test, {
     
-    response <- s3_write(Sys.getenv("TEST_BUCKET_WRITE"))
+    response <- s3_write(Sys.getenv("S3_WRITE"))
     
     # render message
     output$message <- renderPrint({ response })
@@ -212,7 +215,7 @@ server <- function(input, output, session) {
   # logout process ----
   observeEvent(input$logout_button, {
 
-    sendEventToS3(d = d, "LOGOUT", user_input = user_input)
+    send_event_to_s3(app_name = Sys.getenv("SECRET_ID"), event_type = "LOGOUT", user_input = user_input, log_bucket = Sys.getenv("LOG_BUCKET"))
     
     flog.info(paste0("User ", user_input$d2_session$me$userCredentials$username, " logged out."))
     user_input$authenticated  <-  FALSE

@@ -33,7 +33,7 @@ rm(see)
 rm(svc)
 
 # read from the main read bucket -----------------------------------------------
-my_bucket <- Sys.getenv("TEST_BUCKET")
+my_bucket <- Sys.getenv("S3_READ")
 
 # Lists all of bucket contents, fill in your bucket
 choices <- aws.s3::get_bucket(bucket = my_bucket)

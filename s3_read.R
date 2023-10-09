@@ -23,7 +23,7 @@ s3_read <- function(bucket) {
   
   # filter just files that end in txt or xlsx or csv
   choices <- choices[grepl("txt$|xlsx$|csv$|xlsx$", choices$file_names), ]
-  print(choices)
+  print(head(choices))
   # reset row names
   rownames(choices) <- NULL
  
